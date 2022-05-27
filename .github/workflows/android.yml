@@ -1,0 +1,45 @@
+name: Android CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: checkout
+      uses: actions/checkout@v3
+    - name: set up JDK 11
+      uses: actions/setup-java@v3
+      with:
+        java-version: '11'
+        distribution: 'temurin'
+        cache: gradle
+    - name: Setup Build Configs
+      run:
+        chmod +x ./gradlew
+    - uses: r0adkll/sign-android-release@v1
+      name: Sign app APK
+      id: sign_app
+      with:
+        releaseDirectory: app/build/outputs/apk/release
+        signingKeyBase64: ${{ secrets.SIGNING_KEY }}
+        alias: ${{ secrets.SIGNING_KEY_ALIAS }}
+        keyStorePassword: ${{ secrets.SIGNING_KEY_PASSWORD }}
+        keyPassword: ${{ secrets.SIGNING_STORE_PASSWORD }}
+    - uses: actions/upload-artifact@v3
+      with:
+        name: outputs
+        path: app/build/outputs/
+    - name: Distribute App
+      run: |
+        curl \
+        -H "Authorization: token ${{secrets.DEPLOY_GATE_API_KEY}}" \
+        -F "file=@app/build/outputs/apk/release/app-release.apk" \
+        -F "message=${{github.event.pull_request.title}}" \
+        "https://deploygate.com/api/users/${{secrets.DEPLOY_GATE_USER_NAME}}/apps"
