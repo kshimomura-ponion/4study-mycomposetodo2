@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">MyComposeToDo</string>
+    <string name="create_todo">Create ToDo</string>
+    <string name="edit_todo">Edit ToDo</string>
+    <string name="todo_title">Title</string>
+    <string name="todo_detail">Detail</string>
+    <string name="confirm_delete">このToDoを削除しますか？</string>
+    <string name="confirm_finish_or_delete">このToDoの完了状態を変更または削除しますか？</string>
+    <string name="delete_button">削除する</string>
+    <string name="loading">ロード中</string>
+    <string name="on_finish_status">完了にする</string>
+    <string name="off_finish_status">完了を取り消す</string>
+    <string name="finish_status">完了</string>
+    <string name="not_finish_status">未完了</string>
+</resources>
