@@ -21,10 +21,19 @@ android {
             useSupportLibrary true
         }
     }
+    signingConfigs {
+        release {
+            // GitHub Actions のワークフローで、プロジェクトのルートに release.keystore が配置され、
+            // パスワード類は環境変数へ設定される想定です。
+            storeFile rootProject.file('release.keystore')
+            storePassword System.getenv('KEYSTORE_PASSWORD')
+            keyAlias System.getenv('KEY_ALIAS')
+            keyPassword System.getenv('KEY_PASSWORD')
+        }
+    }
     buildTypes {
         release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
         }
     }
     compileOptions {

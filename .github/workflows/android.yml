@@ -20,18 +20,18 @@ jobs:
         java-version: '11'
         distribution: 'temurin'
         cache: gradle
-    - name: Setup Build Configs
-      run:
-        chmod +x ./gradlew
-    - name: Sign Android release
-      uses: r0adkll/sign-android-release@v1
-      id: sign_app
-      with:
-        releaseDirectory: ./app/build/outputs/apk/release
-        signingKeyBase64: ${{ secrets.ANDROID_RELEASE_BASE64_KEY }}
-        alias: ${{ secrets.RELEASE_KEY_ALIAS}}
-        keyStorePassword: ${{ secrets.RELEASE_STORE_PASSWORD }}
-        keyPassword: ${{ secrets.RELEASE_KEY_PASSWORD }}
+    - name: Build with Gradle
+      run: |
+        echo "${{ secrets.ANDROID_RELEASE_BASE64_KEY }}" | base64 -d > release.keystore
+        export KEYSTORE_PASSWORD="${{ secrets.RELEASE_STORE_PASSWORDD }}"
+        export KEY_ALIAS="${{ secrets.RELEASE_KEY_ALIAS }}"
+        export KEY_PASSWORD="${{ secrets.RELEASE_KEY_PASSWORD }}"
+        ./gradlew assembleRelease
+    - name: Get apk path
+      id: apk-path
+      run: |
+        path=$(find **/build/outputs/apk -name '*.apk' -type f | head -1)
+        echo "::set-output name=path::$path"
     - name: Distribute App
       run: |
         curl \
