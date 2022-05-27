@@ -23,7 +23,7 @@ jobs:
     - name: Setup Build Configs
       run:
         chmod +x ./gradlew
-    - uses: r0adkll/sign-android-release@v3
+    - uses: r0adkll/sign-android-release@v1
       name: Sign app APK
       id: sign_app
       with:
