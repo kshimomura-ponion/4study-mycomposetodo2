@@ -8,9 +8,7 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     steps:
     - name: checkout
       uses: actions/checkout@v3
@@ -23,10 +21,15 @@ jobs:
     - name: Build with Gradle
       run: |
         echo "${{ secrets.ANDROID_RELEASE_BASE64_KEY }}" | base64 -d > release.keystore
-        export KEYSTORE_PASSWORD="${{ secrets.RELEASE_STORE_PASSWORDD }}"
+        export KEYSTORE_PASSWORD="${{ secrets.RELEASE_STORE_PASSWORD }}"
         export KEY_ALIAS="${{ secrets.RELEASE_KEY_ALIAS }}"
         export KEY_PASSWORD="${{ secrets.RELEASE_KEY_PASSWORD }}"
         ./gradlew assembleRelease
+    - name: Upload apk file
+      uses: actions/upload-artifact@v1
+      with:
+        name: apk
+        path: ${{ steps.apk-path.outputs.path }}
     - name: Get apk path
       id: apk-path
       run: |
