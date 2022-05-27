@@ -12,11 +12,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Decode Keystore
-      run: |
-        echo TEMPDIR = `pwd`
-        echo ${{ secrets.ANDROID_RELEASE_BASE64_KEY }} | base64 -d > ./mctodo-keystore.jks
-        echo $TEMPDIR
     - name: checkout
       uses: actions/checkout@v3
     - name: set up JDK 11
@@ -26,19 +21,16 @@ jobs:
         distribution: 'temurin'
         cache: gradle
     - name: Setup Build Configs
-      run: |
-        echo ${{secrets.ANDROID_RELEASE_BASE64_KEY}} | base64 -d > ./release-application-key
-        echo "RELEASE_STORE_FILE=`pwd`/release-application-key" >> ./local.properties
-        echo "RELEASE_STORE_PASSWORD=${{secrets.RELEASE_STORE_PASSWORD}}" >> ./local.properties
-        echo "RELEASE_KEY_ALIAS={{secrets.RELEASE_KEY_ALIAS}}" >> ./local.properties
-        echo "RELEASE_KEY_PASSWORD=${{secrets.RELEASE_KEY_PASSWORD}}" >> ./local.properties
         chmod +x ./gradlew
-    - name: Android Release Apk Build
-      run: ./gradlew assembleRelease
-      env:
-        RELEASE_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
-        RELEASE_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
-        RELEASE_STORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASSWORD }}
+    - uses: r0adkll/sign-android-release@v3
+      name: Sign app APK
+      id: sign_app
+      with:
+        releaseDirectory: app/build/outputs/apk/release
+        signingKeyBase64: ${{ secrets.SIGNING_KEY }}
+        alias: ${{ secrets.SIGNING_KEY_ALIAS }}
+        keyStorePassword: ${{ secrets.SIGNING_KEY_PASSWORD }}
+        keyPassword: ${{ secrets.SIGNING_STORE_PASSWORD }}
     - uses: actions/upload-artifact@v3
       with:
         name: outputs
