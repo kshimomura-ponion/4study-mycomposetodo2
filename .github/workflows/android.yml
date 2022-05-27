@@ -21,6 +21,7 @@ jobs:
         distribution: 'temurin'
         cache: gradle
     - name: Setup Build Configs
+      run:
         chmod +x ./gradlew
     - uses: r0adkll/sign-android-release@v3
       name: Sign app APK
