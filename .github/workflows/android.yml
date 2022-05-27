@@ -24,13 +24,13 @@ jobs:
         export KEYSTORE_PASSWORD="${{ secrets.RELEASE_STORE_PASSWORD }}"
         export KEY_ALIAS="${{ secrets.RELEASE_KEY_ALIAS }}"
         export KEY_PASSWORD="${{ secrets.RELEASE_KEY_PASSWORD }}"
-        ./gradlew assembleRelease
+        ./gradlew bundleRelease
     - name: Get apk path
       id: apk-path
       run: |
-        path=$(find **/build/outputs/apk -name '*.apk' -type f | head -1)
+        path=$(find **/build/outputs/aab -name '*.aab' -type f | head -1)
         echo "::set-output name=path::$path"
-    - name: Upload apk file
+    - name: Upload aab file
       uses: actions/upload-artifact@v1
       with:
         name: apk
@@ -39,6 +39,6 @@ jobs:
       run: |
         curl \
         -H "Authorization: token ${{secrets.DEPLOY_GATE_API_KEY}}" \
-        -F "file=@app/build/outputs/apk/release/app-release.apk" \
+        -F "file=@app/build/outputs/apk/release/app-release.aab" \
         -F "message=${{github.event.pull_request.title}}" \
         "https://deploygate.com/api/users/${{secrets.DEPLOY_GATE_USER_NAME}}/apps"

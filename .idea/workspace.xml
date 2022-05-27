@@ -53,6 +53,7 @@
     </option>
   </component>
   <component name="GenerateSignedApkSettings">
+    <option name="EXPORT_PRIVATE_KEY" value="false" />
     <option name="KEY_STORE_PATH" value="$PROJECT_DIR$/../keystores/mctodo-keystore2.jks" />
     <option name="KEY_ALIAS" value="key0" />
   </component>
