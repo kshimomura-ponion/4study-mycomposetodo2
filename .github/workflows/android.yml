@@ -23,19 +23,15 @@ jobs:
     - name: Setup Build Configs
       run:
         chmod +x ./gradlew
-    - uses: r0adkll/sign-android-release@v1
-      name: Sign app APK
+    - name: Sign Android release
+      uses: r0adkll/sign-android-release@v1
       id: sign_app
       with:
-        releaseDirectory: app/build/outputs/apk/release
-        signingKeyBase64: ${{ secrets.SIGNING_KEY }}
-        alias: ${{ secrets.SIGNING_KEY_ALIAS }}
-        keyStorePassword: ${{ secrets.SIGNING_KEY_PASSWORD }}
-        keyPassword: ${{ secrets.SIGNING_STORE_PASSWORD }}
-    - uses: actions/upload-artifact@v3
-      with:
-        name: outputs
-        path: app/build/outputs/
+        releaseDirectory: ./app/build/outputs/apk/release
+        signingKeyBase64: ${{ secrets.ANDROID_RELEASE_BASE64_KEY }}
+        alias: ${{ secrets.RELEASE_KEY_ALIAS}}
+        keyStorePassword: ${{ secrets.RELEASE_STORE_PASSWORD }}
+        keyPassword: ${{ secrets.RELEASE_KEY_PASSWORD }}
     - name: Distribute App
       run: |
         curl \
