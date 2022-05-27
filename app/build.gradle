@@ -6,13 +6,6 @@ plugins {
     id 'kotlin-parcelize'
 }
 
-Properties properties = new Properties()
-def localPropertiesFile = project.rootProject.file('local.properties');
-if(!localPropertiesFile.exists()){
-    localPropertiesFile.createNewFile();
-}
-properties.load(localPropertiesFile.newDataInputStream())
-
 android {
     compileSdk 32
 
@@ -28,36 +21,10 @@ android {
             useSupportLibrary true
         }
     }
-
-    signingConfigs{
-        release {
-            if(!properties.getProperty("RELEASE_STORE_FILE", "").empty){
-                storeFile file(properties.getProperty("RELEASE_STORE_FILE", ""))
-            }else{
-                storeFile = file( System.getenv("TEMPDIR") + "/mctodo-keystore.jks")
-            }
-            if(!properties.getProperty("RELEASE_STORE_PASSWORD", "").empty) {
-                storePassword properties.getProperty("RELEASE_STORE_PASSWORD", "")
-            }else{
-                storePassword System.getenv("RELEASE_STORE_PASSWORD")
-            }
-            if(!properties.getProperty("RELEASE_KEY_ALIAS", "").empty) {
-                keyAlias properties.getProperty("RELEASE_KEY_ALIAS", "")
-            } else {
-                keyAlias System.getenv("RELEASE_KEY_ALIAS")
-            }
-            if(!properties.getProperty("RELEASE_KEY_PASSWORD", "").empty) {
-                keyPassword properties.getProperty("RELEASE_KEY_PASSWORD", "")
-            } else {
-                keyPassword System.getenv("RELEASE_KEY_PASSWORD")
-            }
-        }
-    }
     buildTypes {
         release {
-            //minifyEnabled false
-            //proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.release
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
     compileOptions {
